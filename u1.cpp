@@ -195,7 +195,7 @@ void polyakov(double *lat, double *poly){
 			int x[4];
 			indexEO(id, parity, x);
 			double tmp = 0.;
-			for(x[3] = 0; x[3] < Grid[TDir]; ++x[3])
+			for(x[TDir] = 0; x[TDir] < Grid[TDir]; ++x[TDir])
 				tmp += lat[ indexId(x, TDir) ];
 			poly[0] += cos(tmp);
 			poly[1] += sin(tmp);
