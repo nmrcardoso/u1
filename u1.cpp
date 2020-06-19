@@ -114,7 +114,7 @@ void metropolis(double *lat, double beta){
 		#pragma omp parallel for
 		for(int id = 0; id < volume/2; ++id){
 			double phase_old = lat[id + parity * half_volume + mu * volume];
-			int idmu1 = indexEO_neg(id, parity, mu, 1);
+
 			double stapleRe = 0., stapleIm = 0.;
 			staple(lat, id, parity, mu, stapleRe, stapleIm);			
 			double r = std::sqrt( stapleRe*stapleRe + stapleIm*stapleIm );
@@ -219,6 +219,7 @@ int main(){
 	#pragma omp parallel
 	numthreads = omp_get_num_threads();
 	cout << "Number of threads: " << numthreads << endl;
+	cout << endl;
 	
 	//create one RNG per thread
 	generator = new std::mt19937[numthreads];
@@ -240,10 +241,21 @@ int main(){
 	else if(DIRS > 3)  Grid[2] = Nz;
 	if(DIRS==4) Grid[3] = Nt;
 	
-	
+	int niter = 100;
 	double beta = 2.;
 	bool hotstart = false;
 	int ovrn = 3;
+	
+	cout << "Number of directions: " << DIRS << endl;
+	cout << "Lattice Volume: " << Grid[0] << " x " << Grid[1] << " x " << Grid[2] << " x " << Grid[3] << endl;
+	cout << "Beta: " << beta << endl;
+	cout << "Iterations: " << niter << endl;
+	if(hotstart) cout << "Hot start" << endl;
+	else cout << "Cold start" << endl;
+	cout << "Number of overrrelaxation steps: " << ovrn << endl;
+	cout << endl;
+	
+	
 	
 	volume = 1;
 	for(int i = 0; i < 4; ++i) volume *= Grid[i];	
@@ -264,7 +276,7 @@ int main(){
 	double plaq[2];
 	double poly[2];
 	plaquette(lat, plaq);
-	for(iter = 1; iter <= 5000; ++iter){
+	for(iter = 1; iter <= niter; ++iter){
 		metropolis(lat, beta);
 		for(int ovr = 0; ovr < ovrn; ++ovr)
 			overrelaxation(lat, beta);
